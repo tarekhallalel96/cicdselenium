@@ -6,9 +6,6 @@ pipeline {
         }
     }
 
-    environment {
-        // Si nécessaire, tu peux définir d'autres variables d'environnement
-    }
 
     stages {
         stage('Build & Test') {
