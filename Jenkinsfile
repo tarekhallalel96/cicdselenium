@@ -7,7 +7,7 @@ pipeline {
     }
     environment {
         BROWSER = "chrome"
-        SELENIUM_URL = "http://localhost:4444/wd/hub"  // URL du WebDriver dans le conteneur Selenium
+        SELENIUM_URL = "http://localhost:4444"  // URL du WebDriver dans le conteneur Selenium
     }
     stages {
         stage('Start Selenium WebDriver') {
