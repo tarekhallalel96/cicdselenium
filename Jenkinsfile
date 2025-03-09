@@ -1,25 +1,24 @@
 pipeline {
     agent {
         docker {
-            image 'selenium/standalone-chrome:latest'  // Utilisation d'une image Selenium avec Chrome
-            args '--entrypoint=""'  // Supprime l'entrypoint pour pouvoir exécuter notre propre commande (mvn test)
+            image 'maven:3.8.6-openjdk-11' // Image avec Maven et Java
+            args '-v /dev/shm:/dev/shm'  // Réduit les erreurs de mémoire avec Chrome
         }
     }
-
+    environment {
+        BROWSER = "chrome"
+    }
     stages {
-        // Étape pour installer les dépendances et exécuter les tests
-        stage('Install Dependencies and Run Tests') {
+
+        stage('Build & Test') {
             steps {
-                // Exécuter mvn test dans le conteneur Docker
-                sh 'mvn clean test'  // Vous pouvez également ajouter d'autres options selon votre configuration
+                sh 'mvn clean test -Dbrowser=${BROWSER}' // Exécute les tests Selenium
             }
         }
     }
-    
     post {
         always {
-            // Archiver les artefacts (résultats des tests) pour que vous puissiez les consulter après l'exécution du pipeline
-            archiveArtifacts artifacts: '**/target/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
         }
     }
 }
