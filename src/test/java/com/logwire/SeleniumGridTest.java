@@ -25,15 +25,15 @@ public class SeleniumGridTest {
         options.setCapability("se:name", "test_visit_basic_auth_secured_page (ChromeTests)");
 
         // Connexion au Selenium Grid
-        driver = new RemoteWebDriver(new URL("http://192.168.1.96:4444/wd/hub"), options);
+        driver = new RemoteWebDriver(new URL("http://192.168.1.95:4444/wd/hub"), options);
     }
 
     @Test
     public void testSeleniumWebsite() {
-        // Accéder au site Selenium
+ 
+
         driver.get("https://www.selenium.dev");
 
-        // Vérifier que le titre est correct
         assertEquals("Selenium", driver.getTitle(), "Le titre de la page doit être 'Selenium'");
     }
 

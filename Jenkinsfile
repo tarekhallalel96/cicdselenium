@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        SELENIUM_GRID_URL = "http://192.168.1.96:4444"
+        SELENIUM_GRID_URL = "http://192.168.1.95:4444"
     }
 
     stages {
