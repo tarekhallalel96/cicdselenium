@@ -38,21 +38,14 @@ public class AppTest {
     @BeforeEach
     public void setup() {
 
-        String browser = System.getProperty("browser", "firefox").toLowerCase();
-        switch (browser) {
-            case "chrome":
-                driver = new ChromeDriver();
-                break;
-            case "firefox":
-                driver = new FirefoxDriver();
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        driver = new ChromeDriver();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+        driver.get("https://www.saucedemo.com");
 
-                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
-                driver.get("https://www.saucedemo.com");
+        loginPage = new LoginPage(driver);
+        checkoutInformation = new CheckoutInformation(driver);
 
-                loginPage = new LoginPage(driver);
-                checkoutInformation = new CheckoutInformation(driver);
-
-        }
     }
 
     @AfterEach
@@ -388,6 +381,7 @@ public class AppTest {
         ProductSortingUtils.verifierTrieprice(driver, "lohi");
 
     }
+
     @Test
     @Tag("TC-018")
     public void testTridecroissantprix() {
