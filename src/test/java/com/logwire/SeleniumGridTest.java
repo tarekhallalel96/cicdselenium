@@ -37,6 +37,8 @@ public class SeleniumGridTest {
         assertEquals("Selenium", driver.getTitle(), "Le titre de la page doit être 'Selenium'");
     }
 
+
+
     @AfterEach
     public void tearDown() {
         if (driver != null) {
