@@ -1,25 +1,79 @@
 pipeline {
     agent {
         docker {
-            image 'selenium-chrome-maven' // Utilise l'image Docker que tu viens de créer
-            args '-v /dev/shm:/dev/shm' // Réduit les problèmes de mémoire avec Chrome
+            image 'maven:3.8.6-openjdk-11'
         }
     }
 
+    environment {
+        SELENIUM_GRID_URL = "http://172.18.0.3:4444"
+        //SELENIUM_GRID_URL = "http://192.168.1.95:4444"
+    }
 
     stages {
-        stage('Build & Test') {
+        // stage('Checkout') {
+        //     steps {
+        //         git branch: 'main', url: 'https://github.com/ton-repo/ton-projet.git'
+        //     }
+        // }
+
+        stage('Install Dependencies') {
             steps {
-                // Lancer les tests Maven avec Selenium dans le conteneur
-                sh 'mvn clean test'
+                sh 'mvn clean install -DskipTests'
             }
         }
+
+        stage('Run Selenium Tests') {
+            steps {
+                sh 'mvn test -Dselenium.grid.url=$SELENIUM_GRID_URL'
+            }
+        }
+        stage('Generate Allure Report') {
+             steps {
+                 sh 'mvn allure:report'
+             }
+         }
+ 
+         stage('Publish Allure Report') {
+             steps {
+                 allure includeProperties: false, jdk: '', results: [[path: 'target/allure-results']]
+             }
+         }
+ 
+        //  stage('Generate Allure Report') {
+        //     steps {
+        //         sh 'mvn allure:report'
+        //     }
+        // }
+
+        // stage('Publish Allure Report') {
+        //     steps {
+        //         allure includeProperties: false, jdk: '', results: [[path: 'target/allure-results']]
+        //     }
+        // }
+
+        // stage('Publish Test Reports') {
+        //     steps {
+        //         junit '**/target/surefire-reports/*.xml'
+        //     }
+        // }
     }
 
     post {
         always {
-            // Actions après les tests, comme l'archivage des artefacts ou la gestion des logs
-            echo 'Tests terminés'
+            archiveArtifacts artifacts: '**/target/surefire-reports/', fingerprint: true
+        }
+        failure {
+            echo "❌ Les tests Selenium ont échoué."
         }
     }
+    // post {
+    //     always {
+    //         archiveArtifacts artifacts: '**/target/allure-results/', fingerprint: true
+    //     }
+    //     failure {
+    //         echo "❌ Les tests Selenium ont échoué."
+    //     }
+    // }
+    
 }
